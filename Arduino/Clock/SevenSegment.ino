@@ -1,5 +1,6 @@
-const uint32_t digit_color  = strip.gamma32(strip.ColorHSV( 273<<8, 255,  128));
+const uint32_t digit_color  = face_strip.gamma32(face_strip.ColorHSV( 273<<8, 255,  128));
 
+//remember it's wired BCDGAFE + Leading
 
 void SevenSegment()
 {
@@ -22,7 +23,8 @@ void SevenSegment()
 
   //the A-Digit
   //decide what to do first
-  //ring - tens - CDEFA  verticals 3; horizontal 1
+  //remember it's wired BCDGAFE + Leading
+  // so we need BCDG which is two vertical and two horizontal
   switch(display_digit)
   {
     case 2:
@@ -42,16 +44,17 @@ void SevenSegment()
       break;
   }
   //loop once through the digit and use the bool to act
-  for(int led_counter = RING_LEDS + LEADING_ONE_LEDS + 3*VERTICAL_SEG_LEDS + HORIZONTAL_SEG_LEDS;
-      led_counter <     RING_LEDS + LEADING_ONE_LEDS + 3*VERTICAL_SEG_LEDS + 2*HORIZONTAL_SEG_LEDS;
+  for(int led_counter = 2*VERTICAL_SEG_LEDS + 2*HORIZONTAL_SEG_LEDS;
+      led_counter <     2*VERTICAL_SEG_LEDS + 3*HORIZONTAL_SEG_LEDS;
       led_counter++)
       {
-        if(digit_on_not_off)  strip.setPixelColor(led_counter, digit_color);
-        else                  strip.setPixelColor(led_counter, black);
+        if(digit_on_not_off)  face_strip.setPixelColor(led_counter, digit_color);
+        else                  face_strip.setPixelColor(led_counter, black);
       }
 
   //Next the B digit
-  //ring - tens - CDEFAB  verticals 3; horizontal 2
+  //remember it's wired BCDGAFE + Leading
+  //so we're first
   switch(display_digit)
   {
     case 0:
@@ -70,16 +73,17 @@ void SevenSegment()
       break;
   }
   //loop once through the digit and use the bool to act
-  for(int led_counter = RING_LEDS + LEADING_ONE_LEDS + 3*VERTICAL_SEG_LEDS + 2*HORIZONTAL_SEG_LEDS;
-      led_counter <     RING_LEDS + LEADING_ONE_LEDS + 4*VERTICAL_SEG_LEDS + 2*HORIZONTAL_SEG_LEDS;
+  for(int led_counter = 0*VERTICAL_SEG_LEDS + 0*HORIZONTAL_SEG_LEDS;
+      led_counter <     1*VERTICAL_SEG_LEDS + 0*HORIZONTAL_SEG_LEDS;
       led_counter++)
       {
-        if(digit_on_not_off)  strip.setPixelColor(led_counter, digit_color);
-        else                  strip.setPixelColor(led_counter, black);
+        if(digit_on_not_off)  face_strip.setPixelColor(led_counter, digit_color);
+        else                  face_strip.setPixelColor(led_counter, black);
       }
 
   //Next the C digit
-  //ring - tens - CDEFAB  verticals 0; horizontal 0
+  //remember it's wired BCDGAFE + Leading
+  //so we need to go past B
   switch(display_digit)
   {
     case 0:
@@ -99,16 +103,18 @@ void SevenSegment()
       break;
   }
   //loop once through the digit and use the bool to act
-  for(int led_counter = RING_LEDS + LEADING_ONE_LEDS + 0*VERTICAL_SEG_LEDS + 0*HORIZONTAL_SEG_LEDS;
-      led_counter <     RING_LEDS + LEADING_ONE_LEDS + 1*VERTICAL_SEG_LEDS + 0*HORIZONTAL_SEG_LEDS;
+  for(int led_counter = 1*VERTICAL_SEG_LEDS + 0*HORIZONTAL_SEG_LEDS;
+      led_counter <     2*VERTICAL_SEG_LEDS + 0*HORIZONTAL_SEG_LEDS;
       led_counter++)
       {
-        if(digit_on_not_off)  strip.setPixelColor(led_counter, digit_color);
-        else                  strip.setPixelColor(led_counter, black);
+        if(digit_on_not_off)  face_strip.setPixelColor(led_counter, digit_color);
+        else                  face_strip.setPixelColor(led_counter, black);
       }
 
   //Next the D digit
-  //ring - tens - CDEFAB  verticals 1; horizontal 0
+  //remember it's wired BCDGAFE + Leading
+  //so we need to go past BC
+  //D is horizontal
   switch(display_digit)
   {
     case 0:
@@ -127,16 +133,18 @@ void SevenSegment()
       break;
   }
   //loop once through the digit and use the bool to act
-  for(int led_counter = RING_LEDS + LEADING_ONE_LEDS + 1*VERTICAL_SEG_LEDS + 0*HORIZONTAL_SEG_LEDS;
-      led_counter <     RING_LEDS + LEADING_ONE_LEDS + 1*VERTICAL_SEG_LEDS + 1*HORIZONTAL_SEG_LEDS;
+  for(int led_counter = 2*VERTICAL_SEG_LEDS + 0*HORIZONTAL_SEG_LEDS;
+      led_counter <     2*VERTICAL_SEG_LEDS + 1*HORIZONTAL_SEG_LEDS;
       led_counter++)
       {
-        if(digit_on_not_off)  strip.setPixelColor(led_counter, digit_color);
-        else                  strip.setPixelColor(led_counter, black);
+        if(digit_on_not_off)  face_strip.setPixelColor(led_counter, digit_color);
+        else                  face_strip.setPixelColor(led_counter, black);
       }
 
   //Next the E digit
-  //ring - tens - CDEFAB  verticals 1; horizontal 1
+  //remember it's wired BCDGAFE + Leading
+  //so we need to go past BCDGAF
+  //E is vertical
   switch(display_digit)
   {
     case 0:
@@ -153,16 +161,18 @@ void SevenSegment()
       break;
   }
   //loop once through the digit and use the bool to act
-  for(int led_counter = RING_LEDS + LEADING_ONE_LEDS + 1*VERTICAL_SEG_LEDS + 1*HORIZONTAL_SEG_LEDS;
-      led_counter <     RING_LEDS + LEADING_ONE_LEDS + 2*VERTICAL_SEG_LEDS + 1*HORIZONTAL_SEG_LEDS;
+  for(int led_counter = 3*VERTICAL_SEG_LEDS + 3*HORIZONTAL_SEG_LEDS;
+      led_counter <     4*VERTICAL_SEG_LEDS + 3*HORIZONTAL_SEG_LEDS;
       led_counter++)
       {
-        if(digit_on_not_off)  strip.setPixelColor(led_counter, digit_color);
-        else                  strip.setPixelColor(led_counter, black);
+        if(digit_on_not_off)  face_strip.setPixelColor(led_counter, digit_color);
+        else                  face_strip.setPixelColor(led_counter, black);
       }
 
   //Next the F digit
-  //ring - tens - CDEFAB  verticals 2; horizontal 1
+  //remember it's wired BCDGAFE + Leading
+  //so we need to go past BCDGA
+  //F is vertical
   switch(display_digit)
   {
     case 0:
@@ -181,16 +191,18 @@ void SevenSegment()
       break;
   }
   //loop once through the digit and use the bool to act
-  for(int led_counter = RING_LEDS + LEADING_ONE_LEDS + 2*VERTICAL_SEG_LEDS + 1*HORIZONTAL_SEG_LEDS;
-      led_counter <     RING_LEDS + LEADING_ONE_LEDS + 3*VERTICAL_SEG_LEDS + 1*HORIZONTAL_SEG_LEDS;
+  for(int led_counter = 2*VERTICAL_SEG_LEDS + 3*HORIZONTAL_SEG_LEDS;
+      led_counter <     3*VERTICAL_SEG_LEDS + 3*HORIZONTAL_SEG_LEDS;
       led_counter++)
       {
-        if(digit_on_not_off)  strip.setPixelColor(led_counter, digit_color);
-        else                  strip.setPixelColor(led_counter, black);
+        if(digit_on_not_off)  face_strip.setPixelColor(led_counter, digit_color);
+        else                  face_strip.setPixelColor(led_counter, black);
       }
 
   //Next the G digit
-  //ring - tens - CDEFAB  verticals 4; horizontal 2
+  //remember it's wired BCDGAFE + Leading
+  //so we need to go past BCD
+  //G is horizontal
   switch(display_digit)
   {
     case 2:
@@ -209,12 +221,12 @@ void SevenSegment()
       break;
   }
   //loop once through the digit and use the bool to act
-  for(int led_counter = RING_LEDS + LEADING_ONE_LEDS + 4*VERTICAL_SEG_LEDS + 2*HORIZONTAL_SEG_LEDS;
-      led_counter <     RING_LEDS + LEADING_ONE_LEDS + 4*VERTICAL_SEG_LEDS + 3*HORIZONTAL_SEG_LEDS;
+  for(int led_counter = 2*VERTICAL_SEG_LEDS + 1*HORIZONTAL_SEG_LEDS;
+      led_counter <     2*VERTICAL_SEG_LEDS + 2*HORIZONTAL_SEG_LEDS;
       led_counter++)
       {
-        if(digit_on_not_off)  strip.setPixelColor(led_counter, digit_color);
-        else                  strip.setPixelColor(led_counter, black);
+        if(digit_on_not_off)  face_strip.setPixelColor(led_counter, digit_color);
+        else                  face_strip.setPixelColor(led_counter, black);
       }
 
   return;

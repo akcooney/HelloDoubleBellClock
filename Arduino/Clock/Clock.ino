@@ -6,18 +6,27 @@
 
 //Defines for the purpose of setting up the LED display
 //pin for the NeoPixels
-#define LED_PIN   12
+#define RING_LED_PIN  6   //the pin with the ring LED
+#define FACE_LED_PIN  12  //the pin with the face LED string
 //descriptors for the LED clock
-#define RING_LEDS 10          //number of LEDs in the minute ring
-#define LEADING_ONE_LEDS 2    //number of LEDs in the leading number 1 for the hours
-#define VERTICAL_SEG_LEDS 2   //number of LEDs in each vertical segment in the 7 segment display
+#define RING_LEDS 46          //number of LEDs in the minute ring
+#define LEADING_ONE_LEDS 8    //number of LEDs in the leading number 1 for the hours
+#define VERTICAL_SEG_LEDS 4   //number of LEDs in each vertical segment in the 7 segment display
 #define HORIZONTAL_SEG_LEDS 2 //number of LEDs in each horizontal segment in the 7 segment display
 /*All of these LEDs are in a string in the following order:
+1. The Ring LEDs come first on the Ring LED strip on the RING_LED_PIN; there is nothing else
 
-1. The Ring LEDs come first
-2. A single leading one digit is in front for hours 10-12
-3. The vertical seven segments are in place (there are 4 of them)
-4. The horizontal seven segments are in place (there are 3 of them)
+Then there is a second string on the face and it is wired like so:
+1. The rightmost vertical segment; top to bottom
+2. The lower horizontal
+3. The middle horizontal
+4. The upper horizontal
+5. The middle vertical segment; top to bottom
+6. The leading one's digit; bottom to top
+
+In short it's wired in this order: BCDGAFE + Leading
+
+This made sense while it was getting wired, not from a software perspective
 
 Since the whole string is serial all operaitons work by accessing the correct indicies for each segment
 */
@@ -31,16 +40,23 @@ String inputString = "";      // a String to hold incoming data
 bool stringComplete = false;  // whether the string is complete
 
 //holds information about the strip
-Adafruit_NeoPixel strip(  //the count is computed at compile time, and is rather complicated
-                          RING_LEDS + LEADING_ONE_LEDS + 4 * VERTICAL_SEG_LEDS + 3 * HORIZONTAL_SEG_LEDS,
-                          LED_PIN,  //use the LED pin identified above
+Adafruit_NeoPixel ring_strip(  //the count is computed at compile time, and is rather complicated
+                          RING_LEDS,
+                          RING_LED_PIN,  //use the LED pin identified above
+                          NEO_GRB + NEO_KHZ800); //these are based on the string of LEDs that I have
+
+Adafruit_NeoPixel face_strip(  //the count is computed at compile time, and is rather complicated
+                          LEADING_ONE_LEDS + 4 * VERTICAL_SEG_LEDS + 3 * HORIZONTAL_SEG_LEDS,
+                          FACE_LED_PIN,  //use the LED pin identified above
                           NEO_GRB + NEO_KHZ800); //these are based on the string of LEDs that I have
 
 void setup() {
   //Initialize the display; this must be first to avoid any fun startup junk
   //if the LEDs all fire on we could have power supply trouble
-  strip.begin();
-  strip.show();
+  ring_strip.begin();
+  face_strip.begin();
+  ring_strip.show();
+  face_strip.show();
 
   // initialize serial:
   Serial.begin(9600);
@@ -71,7 +87,8 @@ void loop() {
   SevenSegment(); //updates the seven segment display
 
   //at the end of all this execute the strip update
-  strip.show();
+  ring_strip.show();
+  face_strip.show();
 
   //--------------------------------SERIAL CLOCK SETTING SECTION-------------------------------
   //Everything here is related to setting the clock with a serial string

@@ -25,10 +25,10 @@ void TensDigit()
   }
 
   //loop through our leading 1 LEDs
-  for(int led_counter = RING_LEDS; led_counter < RING_LEDS + LEADING_ONE_LEDS; led_counter++)
+  for(int led_counter = VERTICAL_SEG_LEDS*4 + HORIZONTAL_SEG_LEDS*3; led_counter < VERTICAL_SEG_LEDS*4 + HORIZONTAL_SEG_LEDS*3 + LEADING_ONE_LEDS; led_counter++)
   {
-    if(leading_one_on)  strip.setPixelColor(led_counter, digit_color);
-    else                strip.setPixelColor(led_counter, black);
+    if(leading_one_on)  face_strip.setPixelColor(led_counter, digit_color);
+    else                face_strip.setPixelColor(led_counter, black);
   }
   
   return;
