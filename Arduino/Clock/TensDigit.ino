@@ -1,6 +1,6 @@
 //This tab updates the leading 1
 
-void TensDigit()
+void TensDigit(uint32_t digit_color)
 {
   //determine if it's time to turn on the leading 1
 

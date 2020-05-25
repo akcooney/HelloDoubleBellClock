@@ -1,34 +1,42 @@
 //setup some colors for the ring
-const uint32_t elapsed_minutes_color  = ring_strip.Color(6, 6,  0);
-const uint32_t blink_odd_color        = ring_strip.gamma32(ring_strip.ColorHSV(10<<8, 255,  128));
-const uint32_t blink_even_color       = ring_strip.gamma32(ring_strip.ColorHSV(25<<8, 255,  128));
-const uint32_t black                  = ring_strip.Color(0,   0,  0);
+const uint32_t black            = ring_strip.Color(0,   0,  0);
+//colors moved to main clock function
 
-void RingUpdates()
+void RingUpdates(uint32_t stationary_color, uint32_t wiping_color)
 {
-    //First the ring (the precious!!!)
-  int active_ring_led = 0;  //we need an LED to identify the LED which we're going to toggle and pivot around
+  //Updates for the ring (the precious!!!)
+  int stationary_ring_led = 0;  //we need an LED to identify the LED which we're going to toggle and pivot around
+  int wiping_ring_led = 0; //used to keep track of which LED to light during animation
 
-  //compute which LED we are going to be using based on the minute
-  active_ring_led = (minute()*RING_LEDS)/60;  //this will be a floor operation because it converts to float to int
+  //compute which LED we are going to be using based on the minute; this is if we're blinking
+  stationary_ring_led = (minute()*RING_LEDS)/60;  //this will be a floor operation because it converts to float to int
 
-  //roll from the first one up to the active one
-  for(int led_counter = 0; led_counter < active_ring_led; led_counter++)
+  //compute which LED we are going to flash right now, because up until the even second we want to wipe through the ring
+  //this overflows... try again
+  wiping_ring_led = ((((millis()-millis_at_second_start)/10) * RING_LEDS) / 100); //also a floor operation
+  //this is written this way to avoid overflows
+
+  //every other second wipe either a color or black
+  if(second()%2 == 0) 
   {
-    //set the "time has passed" color
-    ring_strip.setPixelColor(led_counter, elapsed_minutes_color);
+    if(wiping_ring_led >= 0)
+    {
+      //OK we have a valid index becuase the wipe is in the visible part of the ring
+      ring_strip.setPixelColor(wiping_ring_led, wiping_color);
+    }
+  }
+  else
+  {
+    //we should be dimming the strip
+    if(wiping_ring_led >= 0)
+    {
+      //OK we have a valid index becuase the wipe is in the visible part of the ring
+      ring_strip.setPixelColor(wiping_ring_led, black);
+    }
   }
 
-  //for the active LED blink it on and off every second
-  //to do this use modulus; on for the odd seconds off for the even
-  if(second()%2 == 0) ring_strip.setPixelColor(active_ring_led, blink_odd_color);
-  else                ring_strip.setPixelColor(active_ring_led, blink_even_color);
-
-  //for the remainder of the ring, shut them off
-  for(int led_counter = active_ring_led + 1; led_counter < RING_LEDS; led_counter++)
-  {
-    ring_strip.setPixelColor(led_counter, black);
-  }
-
+  //set the stationary LED
+  ring_strip.setPixelColor(stationary_ring_led, stationary_color);
+  
   return;
 }

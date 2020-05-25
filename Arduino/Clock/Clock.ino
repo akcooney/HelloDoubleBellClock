@@ -50,6 +50,9 @@ Adafruit_NeoPixel face_strip(  //the count is computed at compile time, and is r
                           FACE_LED_PIN,  //use the LED pin identified above
                           NEO_GRB + NEO_KHZ800); //these are based on the string of LEDs that I have
 
+unsigned long millis_at_second_start;
+int last_second;
+
 void setup() {
   //Initialize the display; this must be first to avoid any fun startup junk
   //if the LEDs all fire on we could have power supply trouble
@@ -71,20 +74,41 @@ void setup() {
   //set the clock source from the RTC
   //this will make sure time comes from the RTC and gets set to the RTC
   setSyncProvider(RTC.get);
+
+  //this is used to help set the millis into second so we can keep track of how many miliseconds we are into this second
+  millis_at_second_start = 0;
+  last_second =0;
+
 }
 
 void loop() {
+  //--------------------------------TIME HACKS------------------------------------------------
+  //This section keeps track of the number of miliseconds we're into the current second
+  //It would be better if I extend the time library to do this instead
+  if(last_second != second())
+  {
+    //save the current second
+    last_second = second();
+    //save the current millis
+    millis_at_second_start = millis();
+  }
+  //these get used to do animations
+  
   //--------------------------------LED STRING MATH SECTION------------------------------------
   //This section contians all the code to set the clock LEDs
   //It computes the ring setup
   //It also computes and sets the seven segment portion based on the time as well
 
+  //for now use hardcoded colors to restructure the function
+  //TODO: make these colors time aware
+  uint32_t common_digit_color = digit_color_function();
+
   //call the updates necessary for the ring
-  RingUpdates();
+  RingUpdates(stationary_color_function(), wiping_color_function());
 
   //updates the numberic display
-  TensDigit();    //updates the tens digit
-  SevenSegment(); //updates the seven segment display
+  TensDigit(common_digit_color);    //updates the tens digit
+  SevenSegment(common_digit_color); //updates the seven segment display
 
   //at the end of all this execute the strip update
   ring_strip.show();

@@ -1,15 +1,19 @@
-const uint32_t digit_color  = face_strip.gamma32(face_strip.ColorHSV( 273<<8, 255,  128));
+//const uint32_t digit_color_base  = face_strip.gamma32(face_strip.ColorHSV( 32<<8, 255,  120));
+//so this is super annoying; but the Hue needs to be left shifted to work; everything else seems OK
+//uint32_t digit_color; //holds the digit color allows us to do time based dimming
 
 //remember it's wired BCDGAFE + Leading
 
-void SevenSegment()
+void SevenSegment(uint32_t digit_color)
 {
+  
   //updates the seven segment display
   //just in case there's a timing issue grab the hour at the start
 
   //also since we're knocking off the leading 1; mod it
   int display_digit = hour();
 
+  //adjust the display digit to be 1-12 for the purpose of the clockface
   if(display_digit > 12) display_digit = display_digit - 12;
   if(display_digit == 0) display_digit = 12;
   display_digit = display_digit % 10; //knock off the 10's digit
