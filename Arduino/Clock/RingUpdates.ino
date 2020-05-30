@@ -13,8 +13,10 @@ void RingUpdates(uint32_t stationary_color, uint32_t wiping_color)
 
   //compute which LED we are going to flash right now, because up until the even second we want to wipe through the ring
   //this overflows... try again
-  wiping_ring_led = ((((millis()-millis_at_second_start)/10) * RING_LEDS) / 100); //also a floor operation
+  wiping_ring_led = ((((millis()-millis_at_second_start)/10) * RING_LEDS) / 200); //also a floor operation
   //this is written this way to avoid overflows
+
+  ring_strip.clear();
 
   //every other second wipe either a color or black
   if(second()%2 == 0) 
@@ -31,7 +33,7 @@ void RingUpdates(uint32_t stationary_color, uint32_t wiping_color)
     if(wiping_ring_led >= 0)
     {
       //OK we have a valid index becuase the wipe is in the visible part of the ring
-      ring_strip.setPixelColor(wiping_ring_led, black);
+      ring_strip.setPixelColor(wiping_ring_led + RING_LEDS/2, wiping_color);
     }
   }
 
